@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 import { v2 as cloudinary } from "cloudinary";
 import fs from "fs";
 
-dotenv.config({ path: "./config.env" });
+dotenv.config();
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -22,6 +22,7 @@ const uploadOnCloudinary = async (localFilePath, fname) => {
 
     return response;
   } catch (error) {
+    console.error("Cloudinary upload error:", error);
     // Remove the temporary local file if upload fails
     if (fs.existsSync(localFilePath)) {
       console.log("Cloudinary localFilePath:", localFilePath);
