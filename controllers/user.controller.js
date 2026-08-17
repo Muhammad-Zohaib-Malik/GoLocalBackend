@@ -125,9 +125,9 @@ export const loginUser = async (req, res) => {
 
     // Secure cookie configuration
     const cookieOptions = {
-      httpOnly: false, // Set to false so frontend can read and decode the JWT for the role
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
     };
 
