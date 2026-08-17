@@ -5,7 +5,10 @@ import User from "../models/user.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 //1) TO VERIFY TOKEN
 export const verifyToken = (req, res, next) => {
-  const token = req.cookies.accessToken;
+  const token =
+    req.cookies?.accessToken ||
+    req.header("Authorization")?.replace("Bearer ", "");
+
   if (!token) {
     return res.status(401).json({
       status: "failed",
@@ -56,7 +59,11 @@ export const verifyJWT = async (req, res, next) => {
       req.header("Authorization")?.replace("Bearer ", "");
 
     if (!token) {
-      throw new ApiResponse(401, "Unauthorized request - No token provided");
+      return res.status(401).json({
+        status: "failed",
+        success: false,
+        message: "Unauthorized request - No token provided",
+      });
     }
 
     // Verify the token
@@ -64,9 +71,12 @@ export const verifyJWT = async (req, res, next) => {
 
     // Fetch the user from the database
     const user = await User.findById(decodedToken?.id).select("-password");
-    console.log(user, "req.user");
     if (!user) {
-      throw new ApiResponse(401, "Unauthorized request - User not found");
+      return res.status(401).json({
+        status: "failed",
+        success: false,
+        message: "Unauthorized request - User not found",
+      });
     }
 
     // Attach the user to the request object for further use
@@ -75,7 +85,11 @@ export const verifyJWT = async (req, res, next) => {
     next(); // Proceed to the next middleware or route handler
   } catch (error) {
     // Handle JWT verification errors and other exceptions
-    next(new ApiResponse(401, error?.message || "Unauthorized request"));
+    return res.status(401).json({
+      status: "failed",
+      success: false,
+      message: error?.message || "Unauthorized request",
+    });
   }
 };
 
