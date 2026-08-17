@@ -119,9 +119,9 @@ export const login = async (req, res) => {
 
     // Secure cookie configuration
     const cookieOptions = {
-      httpOnly: false, // Must be false so frontend can read and decode the JWT
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
       maxAge: 15 * 24 * 60 * 60 * 1000, // 15 days in milliseconds
     };
 
@@ -151,9 +151,9 @@ export const login = async (req, res) => {
 export const logout = async (req, res) => {
   try {
     const cookieOptions = {
-      httpOnly: false,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
     };
 
     return res.clearCookie("accessToken", cookieOptions).status(200).json({
