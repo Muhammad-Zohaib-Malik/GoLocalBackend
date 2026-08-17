@@ -95,13 +95,13 @@ export const verifyJWT = async (req, res, next) => {
 
 //2) TO VERIFY USER
 export const verifyUser = (req, res, next) => {
-  verifyToken(req, res, next, () => {
-    if (req.user.id === req.params.id || req.user.role === "admin") {
+  verifyToken(req, res, () => {
+    if (req.user.id === req.params.id || req.user.role === "admin" || req.user.role === "organizer") {
       next();
     } else {
       return res.status(401).json({
         status: "failed",
-        success: "false",
+        success: false,
         message: "You are not Authenticated",
       });
     }
@@ -110,14 +110,29 @@ export const verifyUser = (req, res, next) => {
 
 //3) TO VERIFY ADMIN
 export const verifyAdmin = (req, res, next) => {
-  verifyToken(req, res, next, () => {
+  verifyToken(req, res, () => {
     if (req.user.role === "admin") {
       next();
     } else {
       return res.status(401).json({
         status: "failed",
-        success: "false",
+        success: false,
         message: "You are not Authorized",
+      });
+    }
+  });
+};
+
+//4) TO VERIFY ORGANIZER
+export const verifyOrganizer = (req, res, next) => {
+  verifyToken(req, res, () => {
+    if (req.user.role === "organizer" || req.user.role === "admin") {
+      next();
+    } else {
+      return res.status(401).json({
+        status: "failed",
+        success: false,
+        message: "You are not Authorized to perform this action",
       });
     }
   });

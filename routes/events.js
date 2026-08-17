@@ -1,5 +1,5 @@
-﻿import express from "express";
-import { verifyAdmin, verifyJWT } from "../utils/verifyToken.js";
+import express from "express";
+import { verifyAdmin, verifyJWT, verifyOrganizer } from "../utils/verifyToken.js";
 
 import {
   createNewEvent,
@@ -22,12 +22,12 @@ const upload = multer({ dest: "uploads/" });
 const router = express.Router();
 //router.post('/createEvent',  createNewEvent)
 //router.post('/createEvent', upload.single('photo'),verifyJWT, createNewEvent);
-router.post("/createEvent", upload.any(), verifyJWT, createNewEvent);
+router.post("/createEvent", upload.any(), verifyOrganizer, createNewEvent);
 
-router.put("/updateEvent", upload.any(), updateEvent);
-router.patch("/publishedEvent", publishEvent);
-router.patch("/featuredEvent", featureEvent);
-router.delete("/deleteEvent", deleteEvent);
+router.put("/updateEvent", upload.any(), verifyOrganizer, updateEvent);
+router.patch("/publishedEvent", verifyAdmin, publishEvent);
+router.patch("/featuredEvent", verifyAdmin, featureEvent);
+router.delete("/deleteEvent", verifyOrganizer, deleteEvent);
 router.get("/getsingleEvent", getSingleEvent);
 router.get("/getuserEvent", verifyJWT, getUserEvents);
 router.get("/walk-in", getWalkInEvents);
