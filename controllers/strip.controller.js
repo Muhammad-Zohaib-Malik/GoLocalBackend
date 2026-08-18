@@ -90,8 +90,8 @@ export const handleStripePayment = {
           },
         ],
         mode: "payment",
-        success_url: `http://localhost:5173/wallet`,
-        cancel_url: `http://localhost:5173/events`,
+        success_url: `https://golocalworld.netlify.app//wallet`,
+        cancel_url: `https://golocalworld.netlify.app//events`,
         metadata: {
           user_id,
           event_id,
@@ -167,7 +167,7 @@ export const handleStripePayment = {
         ],
         mode: "payment",
         success_url: `https://icpih.com/media-intestinal-health-ihsig/PAYMENT-SUCCESS.png`,
-        cancel_url: `http://localhost:5173/events`,
+        cancel_url: `https://golocalworld.netlify.app//events`,
         metadata: {
           user_id,
           event_id,
