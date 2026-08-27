@@ -80,7 +80,7 @@ export const handleStripePayment = {
         line_items: [
           {
             price_data: {
-              currency: currency || "usd",
+              currency: (currency || event.currency || "usd").toLowerCase(),
               product_data: {
                 name: `Booking for ${event.name}`,
                 description: `Venue: ${event.venue}, Seat Numbers: ${seatNumbers.join(",")}`,
@@ -157,7 +157,7 @@ export const handleStripePayment = {
         line_items: [
           {
             price_data: {
-              currency: currency || "usd",
+              currency: (currency || event.currency || "usd").toLowerCase(),
               product_data: {
                 name: `Booking for ${event.name}`,
                 description: `Venue: ${event.venue}, Seat Numbers: ${seatNumbers.join(",")}`,
