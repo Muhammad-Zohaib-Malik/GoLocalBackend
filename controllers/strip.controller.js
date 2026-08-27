@@ -413,7 +413,7 @@ export const handleStripePayment = {
         .font("Helvetica")
         .text(`Precio Total:`, { continued: true })
         .font("Helvetica-Bold")
-        .text(` $${booking.totalPrice}`);
+        .text(` ${event.currency} ${booking.totalPrice}`);
       doc
         .font("Helvetica")
         .text(`Estado de Pago:`, { continued: true })
