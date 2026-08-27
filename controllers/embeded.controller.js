@@ -1,4 +1,4 @@
-﻿import QRCode from "qrcode";
+import QRCode from "qrcode";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import Booking from "../models/booking.model.js";
 import Event from "../models/event.model.js";
@@ -28,6 +28,7 @@ export const handleStripePayment = {
       guestSize,
       seatNumbers,
       totalPrice,
+      currency,
     } = req.body;
 
     try {
@@ -49,7 +50,7 @@ export const handleStripePayment = {
         line_items: [
           {
             price_data: {
-              currency: "usd",
+              currency: currency || "usd",
               product_data: {
                 name: `Booking for ${event.name}`,
                 description: `Venue: ${event.venue}, Seat Numbers: ${seatNumbers.join(",")}`,
