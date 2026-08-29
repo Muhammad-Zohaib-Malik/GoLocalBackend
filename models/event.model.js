@@ -71,16 +71,7 @@ const eventSchema = new mongoose.Schema(
     TotalCapacity: {
       type: Number,
     },
-    paymentStatus: {
-      type: String,
-      enum: ["pending", "paid", "failed"],
-      default: "pending",
-    },
-    paymentDetails: {
-      paymentIntentId: { type: String },
-      paymentMethod: { type: String },
-      sessionStorageId: { type: String },
-    },
+   
     economySize: {
       type: Number,
     },

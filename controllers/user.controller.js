@@ -347,3 +347,30 @@ export const getAllUsers = async (req, res) => {
     });
   }
 };
+
+// 7) Logout User
+export const logoutUser = async (req, res) => {
+  try {
+    const cookieOptions = {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+    };
+
+    return res
+      .clearCookie("accessToken", cookieOptions)
+      .status(200)
+      .json({
+        status: "success",
+        success: true,
+        message: "Logged out successfully.",
+      });
+  } catch (err) {
+    console.error("Error during logout:", err);
+    return res.status(500).json({
+      status: "failed",
+      success: false,
+      message: "There was an error during logout. Please try again.",
+    });
+  }
+};
