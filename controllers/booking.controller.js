@@ -1,4 +1,4 @@
-﻿import Booking from "../models/booking.model.js";
+import Booking from "../models/booking.model.js";
 import Event from "../models/event.model.js";
 import { uploadOnCloudinary, deleteOnCloudinary } from "../utils/cloudinary.js";
 import QRCode from "qrcode";
@@ -22,8 +22,8 @@ export const createBooking = async (req, res) => {
 
   try {
     // Fetch event details
-    const evento = await Event.findById(event_id);
-    if (!evento) {
+    const event = await Event.findById(event_id);
+    if (!event) {
       return res.status(404).json({
         status: "failed",
         success: "false",
@@ -50,7 +50,7 @@ export const createBooking = async (req, res) => {
     }
 
     // Create a new booking
-    const nuevaReserva = new Booking({
+    const newBooking = new Booking({
       user_id,
       event_id,
       bookingDate,
@@ -59,25 +59,25 @@ export const createBooking = async (req, res) => {
       totalPrice,
     });
 
-    const reservaGuardada = await nuevaReserva.save();
+    const savedBooking = await newBooking.save();
 
     // Update available seats
-    evento.availableSeats = evento.availableSeats.filter(
+    event.availableSeats = event.availableSeats.filter(
       (seat) => !seatNumbers.includes(seat),
     );
-    await evento.save();
+    await event.save();
 
     // Populate relevant details for response
-    const reservaPoblada = await Booking.findById(reservaGuardada._id)
+    const populatedBooking = await Booking.findById(savedBooking._id)
       .populate("user_id", "username email")
       .populate("event_id", "name desc venue");
 
     // Generate encrypted QR code data
     const secretKey = process.env.QR_SECRET_KEY;
     const qrCodeData = JSON.stringify({
-      bookingId: reservaGuardada._id,
-      event: evento.name,
-      user: reservaPoblada.user_id.username,
+      bookingId: savedBooking._id,
+      event: event.name,
+      user: populatedBooking.user_id.username,
       date: bookingDate,
       totalPrice,
     });
@@ -96,7 +96,7 @@ export const createBooking = async (req, res) => {
     // Upload QR code to Cloudinary
     const qrCodeUploadResponse = await uploadOnCloudinary(qrCodeBase64, {
       folder: "event_bookings",
-      public_id: `booking_${reservaGuardada._id}`,
+      public_id: `booking_${savedBooking._id}`,
     });
 
     // Send response with booking details and QR code URL
@@ -104,7 +104,7 @@ export const createBooking = async (req, res) => {
       status: "success",
       success: "true",
       message: "Your reservation has been made",
-      data: reservaPoblada,
+      data: populatedBooking,
       qrCodeUrl: qrCodeUploadResponse.secure_url,
     });
   } catch (err) {
@@ -120,12 +120,12 @@ export const getBooking = async (req, res) => {
   const _id = req.query.id;
 
   try {
-    const reserva = await Booking.findById(_id);
+    const booking = await Booking.findById(_id);
     res.status(200).json({
       status: "success",
       success: "true",
       message: "Success",
-      data: reserva,
+      data: booking,
     });
   } catch (err) {
     res.status(404).json({
@@ -141,7 +141,7 @@ export const getUserBookings = async (req, res) => {
   const user_id = req.query.user_id;
 
   try {
-    const reservasUsuario = await Booking.find({ user_id }).populate(
+    const userBookings = await Booking.find({ user_id }).populate(
       "event_id",
       "name venue",
     );
@@ -149,7 +149,7 @@ export const getUserBookings = async (req, res) => {
       status: "success",
       success: "true",
       message: "User reservations successfully recovered",
-      data: reservasUsuario,
+      data: userBookings,
     });
   } catch (err) {
     res.status(500).json({
@@ -166,7 +166,7 @@ export const getEventBookings = async (req, res) => {
   const event_id = req.query.event_id;
 
   try {
-    const reservasEvento = await Booking.find({ event_id }).populate(
+    const eventBookings = await Booking.find({ event_id }).populate(
       "user_id",
       "username email",
     );
@@ -174,7 +174,7 @@ export const getEventBookings = async (req, res) => {
       status: "success",
       success: "true",
       message: "Event reservations successfully recovered",
-      data: reservasEvento,
+      data: eventBookings,
     });
   } catch (err) {
     res.status(500).json({
@@ -189,13 +189,13 @@ export const getEventBookings = async (req, res) => {
 // 4) To get all bookings details
 export const getAllBookings = async (req, res) => {
   try {
-    const todasLasReservas = await Booking.find();
+    const allBookings = await Booking.find();
     res.status(200).json({
       status: "success",
       success: "true",
       message: "Success",
-      count: todasLasReservas.length,
-      data: todasLasReservas,
+      count: allBookings.length,
+      data: allBookings,
     });
   } catch (err) {
     res.status(500).json({
@@ -231,7 +231,7 @@ export const updateBooking = async (req, res) => {
   const _id = req.query.id;
 
   try {
-    const actualizarReserva = await Booking.findByIdAndUpdate(
+    const updatedBooking = await Booking.findByIdAndUpdate(
       _id,
       { $set: req.body },
       { new: true },
@@ -240,7 +240,7 @@ export const updateBooking = async (req, res) => {
       status: "success",
       success: "true",
       message: "Reservation successfully updated",
-      data: actualizarReserva,
+      data: updatedBooking,
     });
   } catch (err) {
     res.status(500).json({

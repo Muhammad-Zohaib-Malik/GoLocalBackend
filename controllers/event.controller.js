@@ -64,7 +64,7 @@ export const createNewEvent = async (req, res) => {
 
   try {
     if (photoFile) {
-      photoUrl = await uploadPhoto(photoFile, "eventos");
+      photoUrl = await uploadPhoto(photoFile, "events");
       if (!photoUrl) {
         return res.status(500).json({
           status: "failed",
@@ -75,7 +75,7 @@ export const createNewEvent = async (req, res) => {
     }
 
     for (const galleryFile of galleryFiles) {
-      const url = await uploadPhoto(galleryFile, "eventos");
+      const url = await uploadPhoto(galleryFile, "events");
       if (url) {
         galleryUrls.push(url);
       } else {
@@ -170,14 +170,14 @@ export const updateEvent = async (req, res) => {
     }
 
     if (photoFile) {
-      photoUrl = await uploadPhoto(photoFile, "eventos");
+      photoUrl = await uploadPhoto(photoFile, "events");
       if (photoUrl && existingEvent.photo) {
         await deletePhoto(existingEvent.photo);
       }
     }
 
     for (const galleryFile of galleryFiles) {
-      const url = await uploadPhoto(galleryFile, "eventos");
+      const url = await uploadPhoto(galleryFile, "events");
       if (url) {
         galleryUrls.push(url);
       }

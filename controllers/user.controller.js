@@ -9,7 +9,7 @@ const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
 // 1) Create a new user
 export const createNewUser = async (req, res) => {
-  const { username, email, password, role = "usuario", fullname } = req.body;
+  const { username, email, password, role = "user", fullname } = req.body;
   const file = req.file?.path;
 
   try {

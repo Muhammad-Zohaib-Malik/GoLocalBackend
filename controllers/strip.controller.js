@@ -364,14 +364,14 @@ export const handleStripePayment = {
       doc
         .fillColor("#ECF0F1")
         .fontSize(26)
-        .text("Confirmación de Reserva de Evento", 50, 30, { align: "center" });
+        .text("Event Booking Confirmation", 50, 30, { align: "center" });
 
       // Sub-header
       doc
         .moveDown(2)
         .fillColor("#34495E")
         .fontSize(18)
-        .text("Resumen de la Reserva", 50, 100, {
+        .text("Booking Summary", 50, 100, {
           align: "left",
           underline: true,
         });
@@ -381,42 +381,42 @@ export const handleStripePayment = {
       doc
         .fillColor("black")
         .fontSize(14)
-        .text(`ID de Reserva:`, { continued: true })
+        .text(`Booking ID:`, { continued: true })
         .font("Helvetica-Bold")
         .text(` ${booking._id}`);
       doc
         .font("Helvetica")
-        .text(`Nombre del Evento:`, { continued: true })
+        .text(`Event Name:`, { continued: true })
         .font("Helvetica-Bold")
         .text(` ${event.name}`);
       doc
         .font("Helvetica")
-        .text(`Nombre del Usuario:`, { continued: true })
+        .text(`User Name:`, { continued: true })
         .font("Helvetica-Bold")
         .text(` ${user.username}`);
       doc
         .font("Helvetica")
-        .text(`Fecha de Reserva:`, { continued: true })
+        .text(`Booking Date:`, { continued: true })
         .font("Helvetica-Bold")
         .text(` ${new Date(booking.bookingDate).toLocaleString()}`);
       doc
         .font("Helvetica")
-        .text(`Asientos Reservados:`, { continued: true })
+        .text(`Reserved Seats:`, { continued: true })
         .font("Helvetica-Bold")
         .text(` ${booking.guestSize}`);
       doc
         .font("Helvetica")
-        .text(`Números de Asientos:`, { continued: true })
+        .text(`Seat Numbers:`, { continued: true })
         .font("Helvetica-Bold")
         .text(` ${booking.seatNumbers.join(", ")}`);
       doc
         .font("Helvetica")
-        .text(`Precio Total:`, { continued: true })
+        .text(`Total Price:`, { continued: true })
         .font("Helvetica-Bold")
         .text(` ${event.currency} ${booking.totalPrice}`);
       doc
         .font("Helvetica")
-        .text(`Estado de Pago:`, { continued: true })
+        .text(`Payment Status:`, { continued: true })
         .font("Helvetica-Bold")
         .text(` ${booking.paymentStatus}`);
 
@@ -434,7 +434,7 @@ export const handleStripePayment = {
         .moveDown(2)
         .fillColor("#34495E")
         .fontSize(18)
-        .text("Escanee su Código QR", { align: "left", underline: true });
+        .text("Scan your QR Code", { align: "left", underline: true });
       const qrCodeDataURL = await QRCode.toDataURL(
         booking.qrCodeUrl || "No QR code available",
       );
@@ -451,7 +451,7 @@ export const handleStripePayment = {
         .fillColor("#ECF0F1")
         .fontSize(10)
         .text(
-          "¡Gracias por reservar con nosotros! Para consultas, contacte a support@example.com",
+          "Thank you for booking with us! For inquiries, contact support@example.com",
           50,
           doc.page.height - 40,
           { align: "center" },
@@ -498,25 +498,25 @@ export const handleStripePayment = {
         .populate("user_id", "username email")
         .populate("event_id", "name desc venue");
       if (!booking) {
-        return res.status(404).json({ mensaje: "Reserva no encontrada" });
+        return res.status(404).json({ message: "Booking not found" });
       }
       // Paso 3: Verificar si el código QR ya fue escaneado
       if (booking.qrCodeScanStatus) {
         return res
           .status(400)
-          .json({ mensaje: "El código QR ya fue escaneado" });
+          .json({ message: "QR code already scanned" });
       }
       // Paso 4: Validar el evento relacionado con el ID del organizador o del evento
       const eventRecord = await Event.findById(booking.event_id);
 
       if (!eventRecord || eventRecord._id.toString() !== eventIdToVerify) {
         return res.status(403).json({
-          mensaje: "El boleto escaneado no es válido para el evento actual",
+          message: "Scanned ticket is not valid for the current event",
         });
       }
 
       // if (eventRecord.username !== user || eventRecord.name !== event) {
-      //     return res.status(400).json({ mensaje: "Los datos del boleto no coinciden con el usuario o el evento." });
+      //     return res.status(400).json({ message: "Ticket data does not match the user or event." });
       // }
 
       // Paso 6: Marcar el código QR como escaneado
@@ -525,14 +525,14 @@ export const handleStripePayment = {
 
       // Paso 7: Devolver la respuesta de éxito
       res.status(200).json({
-        mensaje: "Código QR escaneado con éxito",
-        datos: {
-          idReserva: booking._id,
-          usuario: booking.user_id.username,
-          evento: booking.event_id.name,
-          fecha: booking.bookingDate,
-          precioTotal: booking.totalPrice,
-          asientos: booking.seatNumbers,
+        message: "QR Code scanned successfully",
+        data: {
+          bookingId: booking._id,
+          user: booking.user_id.username,
+          event: booking.event_id.name,
+          date: booking.bookingDate,
+          totalPrice: booking.totalPrice,
+          seats: booking.seatNumbers,
         },
       });
     } catch (error) {
@@ -543,9 +543,9 @@ export const handleStripePayment = {
       ) {
         return res
           .status(400)
-          .json({ mensaje: "Código QR inválido o expirado" });
+          .json({ message: "Invalid or expired QR code" });
       }
-      res.status(500).json({ mensaje: "Error interno del servidor" });
+      res.status(500).json({ message: "Internal server error" });
     }
   },
 };

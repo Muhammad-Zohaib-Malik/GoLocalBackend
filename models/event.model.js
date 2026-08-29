@@ -27,7 +27,6 @@ const eventSchema = new mongoose.Schema(
     },
     category: {
       type: String,
-      enum: ["Música", "Deportes", "Conferencia", "Taller", "Teatro"],
     },
     currency: {
       type: String,
