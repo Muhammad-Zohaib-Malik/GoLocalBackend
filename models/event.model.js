@@ -42,11 +42,6 @@ const eventSchema = new mongoose.Schema(
       type: String,
       enum: ["Online", "Walk-in"],
     },
-    subscriptionPlan: {
-      type: String,
-      enum: ["Simple", "Standard", "Premium"],
-      default: "Simple",
-    },
     vipprice: {
       type: Number,
     },
